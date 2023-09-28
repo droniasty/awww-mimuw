@@ -1,0 +1,29 @@
+<!-- catalogs.html -->
+<!DOCTYPE html>
+<html>
+<body>
+<ul>
+    {% for catalog in full_content %}
+        <li>
+            {% if type == 'catalog' %}
+                <a href="{% url 'catalog_detail' id %}" onclick="change_selected_catalog_id('{{ id }}')">{{ name }}</a>
+            {% else %}
+                <a href="{% url 'file_detail' id %}" onclick="change_file_id('{{ id }}')">{{ name }}</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<script>
+    function ChangeId(type, id) {
+    if (type === 'catalog') {
+      // handle catalog click
+      console.log('Clicked catalog with id', id);
+    } else if (type === 'file') {
+      // handle file click
+      console.log('Clicked file with id', id);
+    }
+  }
+</script>
+</body>
+</html>
+    

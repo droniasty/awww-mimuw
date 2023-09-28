@@ -1,0 +1,246 @@
+.Kolorystyka1{
+    --PasekMenuKolor: #F1F7ED;
+    --WyborPlikuKolor: #91C7B1;
+    --TekstProgramuKolor: #54494B;
+    --FragmentKoduKolor: #B33951;
+    --DZOZKolor: #A28081;
+    --TabButton: #04AA6D;
+}
+
+.Kolorystyka2{
+    --PasekMenuKolor: #56D0DE;
+    --WyborPlikuKolor: #34008B;
+    --TekstProgramuKolor: #6B0088;
+    --FragmentKoduKolor: #FF2BB5;
+    --DZOZKolor: #9C0077;
+    --TabButton: #FF0054;
+}
+.PasekMenu {
+    width: 100%;
+    height:4em;
+    background-color:var(--PasekMenuKolor);
+    overflow: auto;
+}
+
+.PasekMenu a {
+    float: left;
+    width: 8%;
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 12px 0;
+    color: black;
+    font-size: 36px;
+}
+
+.PasekMenu a:hover {
+    background-color: white;
+}
+
+.PasekMenu form {
+   float: right;
+   width: 40%;
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 12px 0;
+    color: black;
+    font-size: 12px;
+    display: none;
+}
+
+.WyborPliku {
+    width: 20%;
+    height:54em;
+    background-color: var(--WyborPlikuKolor);
+    float:left;
+    text-align: left;
+}
+
+.WyborPliku div {
+    padding-left: 1em;
+    white-space: pre;
+
+}
+
+.WyborPliku div:hover {
+    background-color: white;
+
+}
+
+.WyborPliku div.active {
+    background-color: orange;
+}
+
+ul#advancedTargeting {
+    padding-left: 0;
+}
+
+li#advancedTargeting {
+    padding-left: 0;
+}
+
+.TekstProgramu {
+    width: 60%;
+    height:40em;
+    background-color: var(--TekstProgramuKolor);
+    display: inline-block;
+    white-space: pre-wrap;
+    overflow-y: scroll;
+}
+
+.TekstProgramu div {
+    padding-left: 1em;
+    white-space: pre;
+
+}
+
+.TekstProgramu .div:hover {
+    background-color: white;
+
+}
+
+.TekstProgramu div.active {
+    background-color: red;
+}
+
+.FragmentKodu {
+    width: 20%;
+    height:40em;
+    background-color: var(--FragmentKoduKolor);
+    float:right;
+    z-index: 1;
+    white-space: pre;
+    overflow: auto;
+    position: absolute;
+    top: 4em;
+    margin: 0.5em;
+    right: 0;
+}
+
+.tab {
+    width: 80%;
+    height:2em;
+    background-color: var(--PasekMenuKolor);
+    overflow: auto;
+    z-index: 0;
+}
+
+.tab button{
+    background-color: var(--TabButton);
+}
+
+.tab button:hover {
+    background-color: white;
+}
+
+.tab button.active {
+    background-color: var(--DZOZKolor);
+}
+
+.DZOZ { 
+    display: none;
+    width: 80%;
+    height:12em;
+    background-color: var(--DZOZKolor);
+    overflow: auto;
+}
+
+.DZOZ button{
+    background-color: var(--TabButton);
+}
+
+.DZOZ button:hover {
+    background-color: white;
+}
+
+.DZOZ button.active {
+    background-color: orange;
+}
+
+.LeftSide {
+    width: 20%;
+    height:55em;
+    background-color: var(--TekstProgramuKolor);
+    float:left;
+    text-align: left;
+}
+
+.RightSide {
+    width: 20%;
+    height:55em;
+    background-color: var(--TekstProgramuKolor);
+    float:right;
+    z-index: 1;
+    white-space: pre;
+    overflow: auto;
+    position: absolute;
+    top: 4em;
+    margin: 0.5em;
+    right: 0;
+}
+
+.register {
+    width: 60%;
+    height:55em;
+    background-color: var(--FragmentKoduKolor);
+    display: inline-block;
+    white-space: pre-wrap;
+    overflow-y: scroll;
+}
+
+.register form {
+    width: 40%;
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 12px 0;
+    color: black;
+    font-size: 12px;
+}
+
+@media screen and (max-width: 715px) {
+
+  .WyborPliku {
+  width: 30%;
+  height:33em;
+  background-color: var(--WyborPlikuKolor);
+  float:left
+    }
+ 
+ .tab {
+  width: 29%;
+  height:3em;
+  background-color: var(--PasekMenuKolor);
+ float: left;
+  overflow: auto;
+ position: absolute;
+ z-index: 0;
+    }
+ 
+ .DZOZ { 
+  display: none;
+  width: 30%;
+  height:8em;
+  background-color: var(--DZOZKolor);
+ float: left;
+  overflow: auto;
+ text-align: center;
+ position: relative;
+ top: 3em;
+  }
+ 
+ .TekstProgramu {
+  width: 70%;
+  height:33em;
+  background-color: var(--TekstProgramuKolor);
+  margin: 0 auto;
+ display: inline-block;
+ }
+ 
+ .FragmentKodu {
+ width: 70%;
+  height:40em;
+  background-color: var(--FragmentKoduKolor);
+  float:right;
+ z-index: 1;
+    }
+ 
+}

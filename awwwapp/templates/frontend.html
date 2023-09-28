@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+<html>
+    
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>MIMUWU AWWW</title>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+  <link href="{% static 'AddCatalog.js' %}">
+  <link href="{% static 'AddFile.js' %}">
+  <link href="{% static 'ChangeSections.js' %}">
+  <meta charset="UTF-8">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="{% static 'codemirror-codemirror5-9974ded/lib/codemirror.css' %}">
+  <script src="{% static 'codemirror-codemirror5-9974ded/lib/codemirror.js' %}"></script>
+  <script src="{% static 'codemirror-codemirror5-9974ded/mode/javascript/javascript.js' %}"></script>
+  <style>
+    .CodeMirror {
+      height: 500px; /* Set the desired height */
+      width: 100%; /* Set the desired width */
+      top: 0;
+      left: 0;
+    }
+  </style>
+
+
+<!-- dodac funkcje ktora sie wykonuje przy karzdym renderze-->
+</head>
+    
+   <body class="Kolorystyka1">
+   <div class="PasekMenu"  id="pasekmenu">
+    <a onclick="show_dropbox('adding_catalog_dropbox')" id="pasekmenu_new_catalog"><i class="fa fa-plus-square"></i></a> 
+    <a onclick="show_dropbox('adding_file_dropbox')" id="pasekmenu_new_file" target="_blank"><i class="fa fa-plus-square-o"></i></a>
+    <!--<a onclick="show_dropbox('change_section_dropbox')" id="pasekmenu_change_section" target="_blank"><i class="fa fa-reorder"></i></a>  zmiana sekcji -->
+    <a onclick="displayCode()" id="pasekmenu_display"><i class="fa fa-cog"></i></a>
+    <a onclick="delete_catalog()" id="pasekmenu_delete_catalog"><i class="fa fa-trash-o"></i></a>
+    <a onclick="delete_file()" id="pasekmenu_delete_file"><i class="fa fa-trash"></i></a>
+    <a onclick="hideAllSections()" id="pasekmenu_hide_all"><i class="fa fa-eye-slash"></i></a>
+    
+      <form id="adding_catalog_dropbox" method="POST" class="dropbox" >
+        {% csrf_token %}
+        <label for="name" style="font-size: 14px;" >Name:</label>
+        <input type="text" name="name" id="name" required>
+    
+        <label for="description" style="font-size: 14px;">Description:</label>
+        <input type="text" name="description" id="description">
+    
+        <button type="button" id="create_catalog" onclick="addCatalog(event)">Create</button>
+      </form>
+    
+      <form id="adding_file_dropbox" method="POST" class="dropbox">
+        {% csrf_token %}
+        <label for="name" style="font-size: 14px;">Name:</label>
+        <input type="text" name="name" id="fname" required>
+    
+        <label for="description" style="font-size: 14px;">Description:</label>
+        <input type="text" name="description" id="fdescription">
+
+        <label for="file" style="font-size: 14px;">File:</label>
+        <input type="file"  id="file">
+    
+        <button type="submit" id="create_file" onclick="addFile(event)">Create</button>
+      </form>
+   
+      <form id="change_section_dropbox" method="POST" class="dropbox" action="/change_sections/">
+        {% csrf_token %}
+        <label for="sections" style="font-size: 14px;">sections:</label>
+        <input type="text" name="sections" id="sections" size="50" required placeholder="Proszę podać numery pierwszych lini kodu, który ma być w danej sekcji.">
+        <button type="submit" id="change_section_button">Change</button>
+      </form>
+    
+   </div>
+   
+   <div class="container">
+   <div class="WyborPliku" id="WyborPliku">
+    
+   </div>
+   
+   <div class="TekstProgramu" id="program_code">
+    
+   </div>
+
+   <div class="FragmentKodu" id="code_fragment">
+
+   </div>
+   
+   <div class=tab>
+      <button class="tablinks" name="STANDARD" onclick="ShowContent(event, 'STANDARD')">STANDARD</button>
+  		<button class="tablinks" name="OPTYMALIZACJE" onclick="ShowContent(event, 'OPTYMALIZACJE')">OPTYMALIZACJE</button>
+  		<button class="tablinks" name="PROCESOR" onclick="ShowContent(event, 'PROCESOR')">PROCESOR</button>
+      <button class="tablinks" name="ZALEŻNE" onclick="ShowContent(event, this.name)">ZALEŻNE</button>
+   </div>
+   
+   <div id="STANDARD" class="DZOZ">
+  		<h3>STANDARD</h3>
+        <button type="tablinks" name="standard" value="C11" id="C11" onclick="changeStandard(event, this.value)">C11</button>
+        <button type="tablinks" name="standard" value="C99" id="C99" onclick="changeStandard(event, this.value)">C99</button>
+        <button type="tablinks" name="standard" value="C89" id="C89" onclick="changeStandard(event, this.value)">C89</button>
+   </div>
+
+   <div id="OPTYMALIZACJE" class="DZOZ">
+  		<h3>OPTYMALIZACJE</h3>
+        <button type="tablinks" name="optimizations" value="--nogcse" id="--nogcse" onclick="changeOptimizations(event, this.value)">--nogcse </button>
+        <button type="tablinks" name="optimizations" value="--noinvariant" id="--noinvariant" onclick="changeOptimizations(event, this.value)">--noinvariant</button>
+        <button type="tablinks" name="optimizations" value="--noinduction" id="--noinduction" onclick="changeOptimizations(event, this.value)">--noinduction</button>
+   </div>
+
+   <div id="PROCESOR" class="DZOZ">
+  		<h3>PROCESOR</h3>
+        <button type="submit" name="processor" value="mcs51" id="mcs51" onclick="changeProcessor(event, this.value)">MCS51</button>
+        <button type="submit" name="processor" value="z80" id="z80" onclick="changeProcessor(event, this.value)">Z80</button>
+        <button type="submit" name="processor" value="stm8" id="stm8" onclick="changeProcessor(event, this.value)">STM8</button>
+   </div>
+   
+   <div id="ZALEŻNE-mcs51" class="DZOZ">
+      <h3>ZALEŻNE</h3>
+        <button type="submit" name="specyfic" value="--mmodel-small" id="--mmodel-small" onclick="changeSpecyfic(event, this.value)">--mmodel-small</button>
+        <button type="submit" name="specyfic" value="--msmall-rom" id="--msmall-rom" onclick="changeSpecyfic(event, this.value)">--msmall-rom</button>
+        <button type="submit" name="specyfic" value="--mdisable-warning" id="--mdisable-warning" onclick="changeSpecyfic(event, this.value)">--mdisable-warning</button>
+   </div>
+
+   <div id="ZALEŻNE-z80" class="DZOZ">
+      <h3>ZALEŻNE</h3>
+        <button type="submit" name="specyfic" value="--mmodel-small" id="--mmodel-small" onclick="changeSpecyfic(event, this.value)">--mmodel-small</button>
+        <button type="submit" name="specyfic" value="--msmall-rom" id="--msmall-rom" onclick="changeSpecyfic(event, this.value)">--msmall-rom</button>
+        <button type="submit" name="specyfic" value="--mdisable-warning" id="--mdisable-warning" onclick="changeSpecyfic(event, this.value)">--mdisable-warning</button>
+   </div>
+
+   <div id="ZALEŻNE-stm8" class="DZOZ">
+      <h3>ZALEŻNE</h3>
+        <button type="submit" name="specyfic" value="--mmodel-small" id="--mmodel-small" onclick="changeSpecyfic(event, this.value)">--mmodel-small</button>
+        <button type="submit" name="specyfic" value="--mnojtbound" id="--mnojtbound" onclick="changeSpecyfic(event, this.value)">--mnojtbound</button>
+        <button type="submit" name="specyfic" value="--mrelax" id="--mrelax" onclick="changeSpecyfic(event, this.value)">--mrelax</button>
+   </div>
+   
+   </div>
+   
+   
+   <script>
+
+    var editor = CodeMirror(document.getElementById("program_code"), {
+        mode: "clike",
+        lineNumbers: true,
+        theme: "dracula",
+        // Add any additional configuration options here
+    });
+    
+
+    function showUserData () {
+      //open file UserContent.json
+      let full_content_json; // Declare a variable to hold the JSON data
+
+      // Create a new XMLHttpRequest object
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/user_catalogs/');
+      xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            full_content_json = xhr.responseText;
+            // Parse the JSON string to a JavaScript object
+            var full_content = JSON.parse(full_content_json);
+            // delete current 
+
+            // Generate the HTML markup using the full_content object
+            var html = '';
+            for (var i = 0; i < full_content.length; i++) {
+                  var item = full_content[i];
+                  if (item.type == 'catalog') {
+                  html += '<div class="catalog" id="catalog_' + item.id + '" name="catalog" data_catalog_id="' + item.id + '" onclick="changeSelectedCatalog(event,this.getAttribute(\'data_catalog_id\'))">' + item.depth + item.name + '</div>';
+                  } else if (item.type == 'file') {
+                  html += '<div class="file" id="file_' + item.id + '" name="file" data_file_id="' + item.id + '" onclick="changeSelectedFile(event,this.getAttribute(\'data_file_id\'))">' + item.depth + item.name + '</div>';
+                  }
+                }
+                // Set the HTML content of the target element
+                document.getElementsByClassName('WyborPliku')[0].innerHTML = html;
+                $.ajax({
+                url: 'get_selected/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+            
+                var fileId = 'file_' + data.file_id;
+                var selectedCatalogId = 'catalog_' + data.selected_catalog_id;
+                activateGivenElement(fileId);
+                activateGivenElement(selectedCatalogId);
+            
+                },
+                error: function(xhr, status, error) {
+                console.error('Error:', error);
+                }
+                });
+          }
+          
+        };
+        xhr.send();
+    }
+
+    showUserData();
+    var selectedLines = [];
+    
+   	function ShowContent (evt, TabName) {
+    	var i, DZOZ, tablinks;
+      DZOZ = document.getElementsByClassName("DZOZ");
+  		for (i = 0; i < DZOZ.length; i++) {
+    		DZOZ[i].style.display = "none";
+        if (DZOZ[i].id == TabName) {
+          DZOZ[i].style.display = "block";
+        }
+  		}
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+    	  tablinks[i].className = tablinks[i].className.replace(" active", "");
+  		}
+  		evt.currentTarget.className += " active";
+    }
+
+    function change_processor_specyfic_options(processor) {
+      // select a tab which name starts with ZALEŻNE and change it's name to ZALEŻNE + processor
+      var i, DZOZ, tablinks;
+      DZOZ = document.getElementsByClassName("DZOZ");
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        if (tablinks[i].name.startsWith("ZALEŻNE")) {
+          tablinks[i].name = "ZALEŻNE" + processor;
+          tablinks[i].innerHTML = "ZALEŻNE" + processor;
+        }
+      }
+
+    }
+
+    function showCreatingCatalogDropbox() {
+      var inputFields = `
+        <div id="inputFields" style="display: flex; flex-direction: column;">
+          <input type="text" name="name" placeholder="Name">
+          <input type="text" name="description" placeholder="Description">
+          <button type="submit">Submit</button>
+        </div>
+  `   ;
+      document.body.insertAdjacentHTML('beforeend', inputFields);
+    }
+
+    function show_dropbox(dropbox_id) {
+      var dropboxes = document.getElementsByClassName("dropbox");
+      for (i = 0; i < dropboxes.length; i++) {
+        dropboxes[i].style.display = "none";
+      }
+      var dropbox = document.getElementById(dropbox_id);
+      if (dropbox.style.display === "none") {
+          dropbox.style.display = "block";
+      } else {
+          dropbox.style.display = "none";
+      }
+    }
+
+    function displayCode() {
+      fetch('/api/get_code/')
+      .then(response => response.text())
+      .then(data => {
+      const fragmentKodu = document.querySelector('.FragmentKodu');
+      fragmentKodu.innerHTML = data;
+      });
+    }
+
+    function changeStandard (evt, standard) {
+      // do nothing if the element is already active
+      if (evt.currentTarget.className.indexOf("active") > -1) {
+        return;
+      }
+      // get all elements with the name "standard" 
+      var standardElements = document.getElementsByName("standard");
+      // disactivate all elements with the name "standard"
+      for (var i = 0; i < standardElements.length; i++) {
+        standardElements[i].className = standardElements[i].className.replace(" active", "");
+      }
+      // activate the element with the name "standard" which value is equal to the standard parameter
+      evt.currentTarget.className += " active";
+      // call python function change_standard
+      $.ajax({
+        url: 'change_standard/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'standard': standard },
+        success: function(response) {
+          console.log('Standard changed successfully!');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error changing standard:', error);
+        }
+      });
+      
+    }
+
+    function changeProcessor (evt, processor) {
+      // do nothing if the element is already active
+      if (evt.currentTarget.className.indexOf("active") > -1) {
+        return;
+      }
+      // get all elements with the name "processor"
+      var processorElements = document.getElementsByName("processor");
+      // disactivate all elements with the name "processor"
+      for (var i = 0; i < processorElements.length; i++) {
+        processorElements[i].className = processorElements[i].className.replace(" active", "");
+      }
+      // activate the element with the name "processor" which value is equal to the processor parameter
+      evt.currentTarget.className += " active";
+      // disactivate all elements with the name "specyfic"
+      var specyficElements = document.getElementsByName("specyfic");
+      for (var i = 0; i < specyficElements.length; i++) {
+        specyficElements[i].className = specyficElements[i].className.replace(" active", "");
+      }
+      // find element which name starts with 'ZALEŻNE' and change it's name to 'ZALEŻNE' + processor
+      var tablinks = document.getElementsByClassName("tablinks");
+      for (var i = 0; i < tablinks.length; i++) {
+        if (tablinks[i].name.startsWith("ZALEŻNE")) {
+          tablinks[i].name = "ZALEŻNE" + "-" + processor;
+          tablinks[i].innerHTML = "ZALEŻNE" + "-" + processor;
+        }
+      }
+      $.ajax({
+        url: 'change_processor/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'processor': processor },
+        success: function(response) {
+          console.log('Processor changed successfully!');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error changing processor:', error);
+        }
+      });
+    }
+
+    function changeOptimizations (evt, optimization) {
+      if (evt.currentTarget.className.indexOf("active") > -1) {
+        evt.currentTarget.className = evt.currentTarget.className.replace(" active", "");
+      } else {
+        // activate the element with the name "optimization" which value is equal to the optimization parameter
+        evt.currentTarget.className += " active";
+      }
+      $.ajax({
+        url: 'change_optimization/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'optimization': optimization },
+        success: function(response) {
+          console.log('Optimization changed successfully!');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error changing optimization:', error);
+        }
+      });
+      // if the element is already active, disactivate it
+    }
+
+    function changeSpecyfic (evt, specyfic) {
+      // if the element is already active, disactivate it
+      if (evt.currentTarget.className.indexOf("active") > -1) {
+        evt.currentTarget.className = evt.currentTarget.className.replace(" active", "");
+      } else {
+        // activate the element with the name "specyfic" which value is equal to the specyfic parameter
+        evt.currentTarget.className += " active";
+      }
+      $.ajax({
+        url: 'change_specyfic/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'specyfic': specyfic },
+        success: function(response) {
+          console.log('Specyfic changed successfully!');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error changing specyfic:', error);
+        }
+      });
+    }
+
+    function changeSelectedCatalog (evt, catalogId) {
+      // do nothing if the element is already active
+      if (evt.currentTarget.className.indexOf("active") > -1) {
+        return;
+      }
+      // get all elements with the name "catalog"
+      var catalogElements = document.getElementsByName("catalog");
+      // disactivate all elements with the name "catalog"
+      for (var i = 0; i < catalogElements.length; i++) {
+        catalogElements[i].className = catalogElements[i].className.replace(" active", "");
+      }
+      // activate the element with the name "catalog" which value is equal to the catalog parameter
+      evt.currentTarget.className += " active";
+      // call python function change_catalog
+      $.ajax({
+        url: 'change_catalog/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'catalog_id': catalogId },
+        success: function(response) {
+          console.log('Catalog changed successfully!');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error changing catalog:', error);
+        }
+      })
+      
+    }
+
+    function changeSelectedFile (evt, fileId) {
+      // do nothing if the element is already active
+      if (evt.currentTarget.className.indexOf("active") > -1) {
+        return;
+      }
+      // get all elements with the name "file"
+      var fileElements = document.getElementsByName("file");
+      // disactivate all elements with the name "file"
+      for (var i = 0; i < fileElements.length; i++) {
+        fileElements[i].className = fileElements[i].className.replace(" active", "");
+      }
+      // activate the element with the name "file" which value is equal to the file parameter
+      evt.currentTarget.className += " active";
+      // call python function change_file
+      $.ajax({
+        url: 'change_file/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'file_id': fileId },
+        success: function(response) {
+          console.log('File changed successfully!');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error changing file:', error);
+        }
+      })
+
+      let file_content;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'program_code', true);
+      xhr.send();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          file_content = this.responseText;
+          /*document.getElementById("program_code").innerHTML = file_content;
+          var selectableDivs = document.getElementsByClassName("codeline");
+          for (var i = 0; i < selectableDivs.length; i++) {
+            selectableDivs[i].addEventListener("mouseup", handleDivSelection);
+          }*/
+          editor.setValue(file_content);
+        }
+      }
+
+    }  
+
+    function add_catalog (name, description) {
+      $.ajax({
+        url: 'add_catalog/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: { 'name': name, 'description': description },
+        success: function(response) {
+          console.log('Catalog added successfully!');
+          showUserData();
+          /*setTimeout(function() {
+          $.ajax({
+            url: 'get_selected/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+            
+            var fileId = 'file_' + data.file_id;
+            var selectedCatalogId = 'catalog_' + data.selected_catalog_id;
+            activateGivenElement(fileId);
+            activateGivenElement(selectedCatalogId);
+            
+            },
+            error: function(xhr, status, error) {
+            console.error('Error:', error);
+            }
+          });
+          }, 100);*/
+        },
+        error: function(xhr, status, error) {
+          console.error('Error adding catalog:', error);
+        }
+      })
+    }
+
+    function add_file (name, description, content) {
+      var formData = new FormData();
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('file', content);
+      console.log('Name:' + name);
+      console.log('Description:' + description);
+      $.ajax({
+        url: 'add_file/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        data: formData,
+        processData: false, // Prevent jQuery from processing the data
+        contentType: false, // Prevent jQuery from setting content type
+        success: function(response) {
+          console.log('File added successfully!');
+          showUserData();
+          /*setTimeout(function() {
+          $.ajax({
+            url: 'get_selected/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+            
+            var fileId = 'file_' + data.file_id;
+            var selectedCatalogId = 'catalog_' + data.selected_catalog_id;
+            activateGivenElement(fileId);
+            activateGivenElement(selectedCatalogId);
+            
+            },
+            error: function(xhr, status, error) {
+            console.error('Error:', error);
+            }
+          });
+          }, 100);*/
+        },
+        error: function(xhr, status, error) {
+          console.error('Error adding file:', error);
+        }
+      })
+
+    }
+
+    function addCatalog(event) {
+      event.preventDefault(); // Prevent the default form submission
+      //var form = document.getElementById("adding_catalog_dropbox");
+      var name = document.getElementById("name").value;
+      var description = document.getElementById("description").value;
+      // find the active catalog
+      add_catalog(name, description);
+      // if ther was an active catalog before adding a new one, make it active again
+      //changeSelectedCatalog(event, activeCatalogId);
+      //changeSelectedFile(event, activeFileId);
+      
+    }
+
+    function addFile(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      var name = document.getElementById("fname").value;
+      var description = document.getElementById("fdescription").value;
+      var fileInput = document.getElementById("file");
+
+      // Check if a file is selected
+      if (fileInput.files.length > 0) {
+      var file = fileInput.files[0];
+      // You now have the file object of type File
+
+      // Call your function and pass the file object
+      add_file(name, description, file);
+      } else {
+      // Handle the case when no file is selected
+      console.log("No file selected");
+      }
+
+    }
+
+    function delete_file() {
+      $.ajax({
+        url: 'delete_file/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        //data: { 'file_id': file_id },
+        success: function(response) {
+          console.log('File deleted successfully!');
+          //location.reload();
+          showUserData();
+        },
+        error: function(xhr, status, error) {
+          console.error('Error deleting file:', error);
+        }
+      })
+    }
+
+    function delete_catalog() {
+      $.ajax({
+        url: 'delete_catalog/',
+        method: 'POST',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader('X-CSRFToken', $('input[name="csrfmiddlewaretoken"]').val());
+        },
+        //data: { 'catalog_id': catalog_id },
+        success: function(response) {
+          console.log('Catalog deleted successfully!');
+          //location.reload();
+          showUserData();
+        },
+        error: function(xhr, status, error) {
+          console.error('Error deleting catalog:', error);
+        }
+      })
+    }
+
+    function activateGivenElement(id) {
+      var element = document.getElementById(id);
+      if (element) {
+        element.classList.add('active');
+      }
+    }  
+
+    function clickOnElement(elementId) {
+      var element = document.getElementById(elementId);
+      if (element) {
+        element.click();
+      }
+    }
+
+    function ScrollToElement(elementId) {
+      var element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView();
+      }
+    }
+
+    function hightLine(ID) {
+      // if theer is an active div in the TekstProgramu dezactivate it
+      var codelines = document.getElementsByClassName("codeline");
+      //console.log(codelines);
+      for (var i = 0; i < codelines.length; i++) {
+        if (codelines[i].classList.contains("active")) {
+          codelines[i].classList.remove("active");
+        }
+      }
+      ID -= 1
+      //console.log("ID: " + ID);
+      var lineID = "prog_line_" + ID;
+      console.log("lineID: " + lineID);
+      var line = document.getElementById(lineID);
+      line.className += " active";
+      ScrollToElement(lineID)
+    }
+
+    function hideShowDivs(divName) {
+      //divNames.forEach(function (name) {
+      var divs = document.getElementsByName(divName);
+      divs.forEach(function (div) {
+      if (div) {
+        if (div.style.display === 'none') {
+          div.style.display = ''; // Show the div
+        } else {
+          div.style.display = 'none'; // Hide the div
+        }
+      }
+      });
+    }
+
+    function hideAllSections () {
+      // hide all divs of class section_content
+      var divs = document.getElementsByClassName("section_content");
+      // check if the first div is hidden
+      if (divs[0].style.display === 'none') {
+        // if it is hidden, show all divs
+        for (var i = 0; i < divs.length; i++) {
+          divs[i].style.display = '';
+        }
+      } else {
+        // if it is not hidden, hide all divs
+      for (var i = 0; i < divs.length; i++) {
+        divs[i].style.display = 'none';
+      }
+    }
+    }
+
+    
+      
+   </script>
+  </body>
+</html>
+   
+   

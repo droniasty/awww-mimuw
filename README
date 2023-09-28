@@ -1,0 +1,5 @@
+Uruchamnianie przy testowaniu:
+coverage run manage.py runserver --noreload
+Testowanie:
+coverage run -p --rcfile=.coveragerc manage.py test
+

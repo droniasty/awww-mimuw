@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+  <meta charset="UTF-8">
+</head>
+<body class="Kolorystyka1">
+
+      <!---------->
+
+    <div class="PasekMenu"  id="pasekmenu">
+        
+        
+    </div>
+       
+    <div class="container">
+    <div class="LeftSide" id="LeftSide">
+        
+    </div>
+       
+    <div class="register" id="register">
+        <h1>Login</h1>
+    <form method="POST" action="/login/">
+        {% csrf_token %}
+        <label for="login">Login:</label>
+        <input type="text" name="login" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <form method="POST" action="/register/" class="register">
+      {% csrf_token %}
+      <label for="name">Name:</label>
+      <input type="text" name="name" required><br><br>
+      <label for="login">Login:</label>
+      <input type="text" name="login" required><br><br>
+      <label for="password">Password:</label>
+      <input type="password" name="password" required><br><br>
+      <button type="submit">Register</button>
+    </form>
+    <a href="/register_viev/">Register</a>
+    </div>
+    </form>
+    </div>
+    
+    <div class="RightSide" id="RightSide">
+    </div>
+</body>
+</html>
