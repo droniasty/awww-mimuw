@@ -118,11 +118,6 @@ class TestModel(TestCase):
         self.assertTrue(first_section)
         self.assertTrue(second_section)
         self.assertTrue(third_section)
-        # check if sections are accessible
-        #self.assertTrue(first_section.is_accessible())
-        #self.assertTrue(second_section.is_accessible())
-        #self.assertTrue(third_section.is_accessible())
-        # check if sections are in file
         self.assertEqual(first_section.file, file)
         self.assertEqual(second_section.file, file)
         self.assertEqual(third_section.file, file)
@@ -187,10 +182,6 @@ class TestVievs(TestCase):
         super().setUpClass()
         cls.client = Client()
         cls.driver = webdriver.Firefox()
-        # run server
-        #cls.server_thread = threading.Thread(target=cls.client.get('http://127.0.0.1:8000/frontend/', follow=True))
-        #cls.server_thread.start()
-        # wait for server to start
         time.sleep(1)
         # open browser
         
@@ -273,13 +264,6 @@ class TestVievs(TestCase):
         
 
     def test_change_standard_test(self):
-        '''
-        form_data = {
-            'name': 'Test User',
-            'login': 'TestLogin',
-        }
-        response = self.client.post('http://127.0.0.1:8000/login/', data=form_data, follow=True)
-        '''
         response = self.client.get('http://127.0.0.1:8000/frontend/')
         # Assert that the "STANDARD" button is present on the page
         self.assertContains(response, 'STANDARD')
@@ -295,9 +279,6 @@ class TestVievs(TestCase):
 
     def test_change_processor_test(self):
         response = self.client.get('http://127.0.0.1:8000/frontend/')
-        #print("HI")
-        #response = self.client.get('http://127.0.0.1:8000/frontend/')  
-        #self.assertEqual(response.status_code, 200)
         # Assert that the "PROCESSOR" button is present on the page
         self.assertContains(response, 'PROCESOR')
         response = self.client.post('http://127.0.0.1:8000/frontend/', {'button': 'PROCESSOR'})
@@ -323,29 +304,6 @@ class TestVievs(TestCase):
         response = self.client.post('http://127.0.0.1:8000/frontend/', {'button': '--noinvariant'})
         #assert compiler_options['optimization'] == ['--nogcse', '--noinvariant']
         self.assertEqual(response.status_code, 200)
-
-    '''
-    def test_add_catalog_test(self):
-        self.driver.get('http://127.0.0.1:8000/frontend/')
-        # click on the first element on the "pasek menu" button
-        element = self.driver.find_element(By.ID, 'pasekmenu_new_catalog')
-        element.click()
-        # fill the form with id adding_file_dropbox
-        form_element = self.driver.find_element(By.ID, 'adding_catalog_dropbox')
-        name_input = form_element.find_element(By.NAME, 'name')
-        name_input.send_keys('nazwa katalogu')
-        description_input = form_element.find_element(By.NAME, 'description')
-        description_input.send_keys('opis katalogu')
-        form_element.submit()
-        # check if the catalog has been added
-        #dopisac usuwanie katalogu
-        # wait for server to process the request
-        time.sleep(1)
-        element = self.driver.find_element(By.NAME, 'catalog')
-        element.click()
-        element = self.driver.find_element(By.ID, "pasekmenu_delete_catalog")
-        element.click()
-    '''
         
 
     def test_add_file_and_change_sections_test(self):
@@ -359,12 +317,8 @@ class TestVievs(TestCase):
         name_input.send_keys('nazwa katalogu')
         description_input = form_element.find_element(By.NAME, 'description')
         description_input.send_keys('opis katalogu')
-        #form_element.submit()
-        # press button "Create"
         element = self.driver.find_element(By.ID, 'create_catalog')
-        element.click()
-        # click on elemont of class "catalog"
-        # wait for server to process the request    
+        element.click()    
         time.sleep(1)
         element = self.driver.find_element(By.NAME, 'catalog')
         element.click()
@@ -397,12 +351,7 @@ class TestVievs(TestCase):
         description_input.send_keys('opis pliku')
         file_input = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'input[type="file"]')))
-        #file_path = 'hellotest.c'
-        #file_input.send_keys(file_path)
-        # find any file with .c extension
         file_input.send_keys(os.getcwd() + '/awwwapp/hellotest.c')
-        #form_element.submit()
-        # press button "Create"
         element = self.driver.find_element(By.ID, 'create_file')
         element.click()
         element = self.driver.find_element(By.NAME, 'file')
@@ -413,18 +362,6 @@ class TestVievs(TestCase):
         html = element.get_attribute('innerHTML')
         #assert that the html is not empty
         self.assertNotEqual(html, '')
-        '''
-        element = self.driver.find_element(By.ID, 'pasekmenu_change_section')
-        element.click()
-        time.sleep(1)
-        form = self.driver.find_element(By.ID, 'change_section_dropbox')
-        input_field = form.find_element(By.ID, 'sections')
-        input_field.clear()
-        input_field.send_keys('1 2 4')
-        submit_button = form.find_element(By.ID, 'change_section_button')
-        submit_button.click()
-        '''
-        # click on the element with id "pasekmenu_display" 
         #click on buttonn with id="STANDARD"
         element = self.driver.find_element(By.NAME, 'STANDARD')
         element.click()
@@ -450,16 +387,10 @@ class TestVievs(TestCase):
         #click on buttonn with id="ZALEŻNE-z80"
         element = self.driver.find_element(By.NAME, 'ZALEŻNE-z80')
         element.click()
-        # find all elements with name="specyfic"
-        #elements = self.driver.find_elements(By.NAME, 'specyfic')
-        #click one of them
-        #elements[1].click()
         element = self.driver.find_element(By.NAME, 'catalog')
         element.click()
         element = self.driver.find_element(By.ID, 'pasekmenu_delete_catalog')
         element.click()
-        
-        
         element = self.driver.find_element(By.ID, 'pasekmenu_display')
         element.click()
         # assert that something has appeared in the "code_fragment" section
@@ -505,7 +436,6 @@ class TestVievs(TestCase):
         # click on element with id="--nogcse"
         element = self.driver.find_element(By.ID, '--nogcse')
         element.click()
-        # assert that the "--nogcse" button is pressed
         
     
 
@@ -525,11 +455,6 @@ class TestVievs(TestCase):
         # click on element with id="--std-c99"
         element = self.driver.find_element(By.ID, 'C99')
         element.click()
-    '''
-    def test_change_sections(self):
-        self.driver.get('http://127.0.0.1:8000/frontend/')
-        # click on element sith id="pasekmenu_change_section" 
-    '''    
         
 
 
