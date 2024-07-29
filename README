@@ -1,5 +1,4 @@
-Uruchamnianie przy testowaniu:
+Startup during testing:
 coverage run manage.py runserver --noreload
-Testowanie:
+Testing:
 coverage run -p --rcfile=.coveragerc manage.py test
-
