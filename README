@@ -1,4 +1,48 @@
-Startup during testing:
-coverage run manage.py runserver --noreload
-Testing:
-coverage run -p --rcfile=.coveragerc manage.py test
+Application Overview
+
+This application provides an interface for utilizing the capabilities of the SDCC compiler. The key features and functionalities are described below:
+File Selection Section
+
+    The application displays the directory structure available in the database in the File Selection section. This section is implemented as a page template fragment (or template) populated with data from the database.
+
+File Management
+
+    Add File: Users can add a file to the database. The file is automatically divided into sections based on predefined categories, but users can manually define sections, mark file fragments as sections, and merge existing sections into one common section. These operations are available in the menu bar. Note: Full functionality requires JavaScript, so initially, only partial server-side handling is implemented.
+    Add Directory: Users can add a directory to the database. This operation is available in the menu bar.
+    Delete Entry: Users can mark files or directories as unavailable (instead of completely deleting them) using an availability flag. This operation is available in the menu bar and includes a mechanism for selecting the file or directory.
+
+Code Fragment Section
+
+    The application displays the content of the file filename.asm resulting from the command:
+
+    sdcc -S <filename>.c
+
+    enhanced with other options specified in the user interface, where filename.c corresponds to the currently selected file. The output in filename.asm is divided into sections separated by dashed lines. Hovering over a section highlights it, with different highlighting for the section header and content. This section display is implemented using a page template fragment or template.
+
+Tabs Section
+
+    The lower part of the screen includes four tabs:
+        Standard Tab: Specifies the compiler standard compliance (at least C89, C99, C11). Users can select one, and all compiler executions by the application will comply with the selected standard.
+        Optimization Tab: Lists available optimization types (at least three). Users can select a set of optimizations, and all compiler executions by the application will generate code according to the selected optimizations.
+        Processor Tab: Lists available SDCC processor architectures (at least MCS51, Z80, and STM8). Users can select one, and all compiler executions by the application will target the selected processor.
+        Dependent Options Tab: Lists compiler options dependent on the processor. For each selected processor, this tab allows selecting three relevant options (e.g., for MCS51, the target program model - small, medium, large, huge model programs).
+
+Menu Options
+
+    The menu includes an option to execute a full compilation of the currently selected file. The process updates the content of the Code Fragment section and allows saving the compilation result to the local disk.
+
+Running the Project
+
+To run the project with the provided Dockerfile, follow these steps:
+
+    Ensure Docker is installed on your system.
+    Build the Docker image:
+
+docker build -t your-django-app .
+
+Run the Docker container:
+
+docker run -p 8000:8000 your-django-app
+
+Access your application:
+Open your web browser and navigate to http://localhost:8000.
