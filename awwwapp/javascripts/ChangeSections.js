@@ -11,10 +11,10 @@ $("#change_section_dropbox").submit(function(event) {
             sections: sections
         },
         success: function(response) {
-            // Handle the response from the server
+            console.log(response);
         },
         error: function(xhr, status, error) {
-            // Handle errors
+            console.log(xhr);
         }
     });
 });

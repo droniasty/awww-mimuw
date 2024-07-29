@@ -18,7 +18,7 @@ $("#adding_catalog_dropbox").submit(function(event) {
             console.log(response);
         },
         error: function(xhr, status, error) {
-            // Handle errors
+            console.log(xhr)
         }
     });
 });

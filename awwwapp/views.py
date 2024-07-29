@@ -4,25 +4,12 @@ import subprocess
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login
-#from django.template import loader
-#import requests
 from awwwapp.models import FileSection, SectionStatus, User, Catalog, File, SectionKind
 import pdb
 import re
 from  awwwapp.globals import *
 
-#from django import forms
-
-#from awwwlab.awwwapp.forms import StandardForm
-
 def login_viev(request):
-    #default_user()
-    # get user with the smallest id
-    #user = User.objects.all().order_by('id')[0]
-    #request.session['user_id'] = user.id
-    #request.session['selected_catalog_id'] = 0
-    #request.session['file_id'] = 0
-    #return redirect('/frontend')
     return render(request, 'login.html')
 
 def register_viev(request):

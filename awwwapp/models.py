@@ -3,7 +3,6 @@ from django.dispatch import receiver
 from django.db.models.signals import post_migrate
 
 class User(models.Model):
-    # add promary key field to User model
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     login = models.CharField(max_length=100)
@@ -11,9 +10,7 @@ class User(models.Model):
     
 
 class Catalog(models.Model):
-    # add promary key field to Catalog model
     id = models.AutoField(primary_key=True)
-    # add reference to supercatalog
     supercatalog = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
@@ -31,9 +28,7 @@ class Catalog(models.Model):
     
 
 class File(models.Model):
-    # add promary key field to File model
     id = models.AutoField(primary_key=True)
-    # add reference to catalog
     catalog = models.ForeignKey(Catalog, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)

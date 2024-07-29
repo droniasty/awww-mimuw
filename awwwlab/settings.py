@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'awwwapp',
-    #"main",  #new
 ]
 
 STATIC_URL = '/static/'
